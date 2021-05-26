@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 import BugIcon from '../components/Icons/BugIcon';
 import DarkIcon from '../components/Icons/DarkIcon';
@@ -73,4 +74,10 @@ export const getColorByType = (typeName) => {
 
 export const capitalizeString = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+export const getUrlEvolution = async (url) => {
+  const { data } = await axios.get(url);
+  const { evolution_chain } = data;
+  return evolution_chain.url;
 };

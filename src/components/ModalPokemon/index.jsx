@@ -4,7 +4,12 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 import useStyles from './ModalPokemon.styles';
-import { getIconByType, getColorByType, capitalizeString } from './../../utils';
+import {
+  getIconByType,
+  getColorByType,
+  capitalizeString,
+  getUrlEvolution,
+} from './../../utils';
 
 import PokemonContext from '../../context/Pokemon/PokemonContext';
 
@@ -14,10 +19,10 @@ import StaminaIcon from '../Icons/StaminaIcon';
 
 const ModalPokemon = forwardRef((props, ref) => {
   const { pokemon } = props;
-  const { id, name, sprites, types, height, stats, weight } = pokemon;
+  const { id, name, sprites, types, height, stats, weight, species } = pokemon;
 
   const pokemonContext = useContext(PokemonContext);
-  const { getEvolution, pokemonEvolution } = pokemonContext;
+  const { getEvolution, clearEvolution, pokemonEvolution } = pokemonContext;
 
   const colors = getColorByType(types[0].type.name);
   const [colorMax, colorMin] = colors;
@@ -35,8 +40,9 @@ const ModalPokemon = forwardRef((props, ref) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getEvolution(id);
-      console.log(await pokemonEvolution);
+      await clearEvolution();
+      const url = await getUrlEvolution(species.url);
+      await getEvolution(url);
     };
 
     fetchData();
@@ -142,9 +148,9 @@ const ModalPokemon = forwardRef((props, ref) => {
         </Grid>
       </Grid>
       <Grid item xs={false} md={8}>
-        <p id="simple-modal-description">
-          Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-        </p>
+        {pokemonEvolution.map((pokemon) => (
+          <h1 key={pokemon.id}>{pokemon.name}</h1>
+        ))}
       </Grid>
     </Grid>
   );

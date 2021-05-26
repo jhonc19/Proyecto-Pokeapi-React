@@ -8,7 +8,7 @@ const PokemonState = (props) => {
     pokemonList: [],
     favoriteList: [],
     pokemon: {},
-    pokemonEvolution: {},
+    pokemonEvolution: [],
     notFound: false,
     search: false,
   };
@@ -147,19 +147,45 @@ const PokemonState = (props) => {
     }
   };
 
-  const getEvolution = async (idPokemon) => {
+  const getEvolution = async (url) => {
     try {
-      const url = `https://pokeapi.co/api/v2/evolution-chain/${idPokemon}/`;
       const { data } = await axios.get(url);
       const { chain } = data;
+      const pokemons = getNamePokemonEvolution(chain);
+
+      const promises = pokemons.map(async (pokemon) => {
+        const url = `https://pokeapi.co/api/v2/pokemon/${pokemon}`;
+        const { data } = await axios.get(url);
+        return data;
+      });
+
+      const pokemonEvolutions = await Promise.all(promises);
 
       dispatch({
         type: 'GET_EVOLUTION',
-        payload: chain,
+        payload: pokemonEvolutions,
       });
     } catch (error) {
       console.log(error);
     }
+  }
+  
+  const clearEvolution = async () => {
+    dispatch({
+      type: 'GET_EVOLUTION',
+      payload: [],
+    });
+  }
+
+  const getNamePokemonEvolution = (chain) => {
+    let namePokemons = [];
+
+    while (chain) {
+      namePokemons.push(chain.species.name);
+      chain = chain.evolves_to[0];
+    }
+
+    return namePokemons;
   };
 
   const [state, dispatch] = useReducer(PokemonReducer, initialState);
@@ -177,6 +203,7 @@ const PokemonState = (props) => {
         searchPokemon,
         clearPokemon,
         clearPokemons,
+        clearEvolution,        
         getEvolution,
         notFound: state.notFound,
         search: state.search,
