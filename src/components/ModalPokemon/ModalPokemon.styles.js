@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((props) => ({
   root: {
-    width: 950,
+    width: (props) => props.widthModal,
     backgroundColor: (props) => `${props.colorMin}`,
     boxShadow:
       '0px 3px 5px -1px rgb(0 0 0 / 20%),' +
@@ -73,6 +73,24 @@ const useStyles = makeStyles((props) => ({
 
   contentTypes: {
     padding: '0 0 4px 0',
+  },
+
+  contentEvolution: {
+    height: '100%',
+  },
+
+  itemEvolution: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+
+  arrowEvolution: {
+    marginTop: (props) => `${props.marginArrow}`,
+  },
+
+  mediaEvolution: {
+    width: '120px',
   },
 }));
 

@@ -2,6 +2,7 @@ import React, { forwardRef, useContext, useEffect } from 'react';
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 import useStyles from './ModalPokemon.styles';
 import {
@@ -16,17 +17,22 @@ import PokemonContext from '../../context/Pokemon/PokemonContext';
 import AttackIcon from '../Icons/AttackIcon';
 import DefenseIcon from '../Icons/DefenseIcon';
 import StaminaIcon from '../Icons/StaminaIcon';
+import Loading from '../shared/Loading';
 
 const ModalPokemon = forwardRef((props, ref) => {
   const { pokemon } = props;
-  const { id, name, sprites, types, height, stats, weight, species } = pokemon;
+  const { name, sprites, types, height, stats, weight, species } = pokemon;
 
   const pokemonContext = useContext(PokemonContext);
   const { getEvolution, clearEvolution, pokemonEvolution } = pokemonContext;
 
   const colors = getColorByType(types[0].type.name);
   const [colorMax, colorMin] = colors;
-  const classes = useStyles({ colorMax, colorMin });
+  const widthModal = pokemonEvolution.length > 1 ? 800 : 400;
+  const widthGrid = pokemonEvolution.length > 1 ? 6 : 12;
+  const marginArrow = pokemonEvolution.length > 2 ? '-60px' : '-220px';
+
+  const classes = useStyles({ colorMax, colorMin, widthModal, marginArrow });
 
   const statsIndexed = stats.reduce(
     (acc, el) => ({
@@ -48,11 +54,11 @@ const ModalPokemon = forwardRef((props, ref) => {
     fetchData();
   }, []);
 
-  return (
+  return pokemonEvolution.length > 0 ? (
     <Grid container className={classes.root} spacing={2}>
-      <Grid item xs={12} md={4}>
+      <Grid item xs={10} md={widthGrid}>
         <Typography variant="h4" className={classes.namePokemon}>
-          {name.toUpperCase() + ' - ' + id}
+          {name.toUpperCase()}
         </Typography>
 
         <img
@@ -147,12 +153,40 @@ const ModalPokemon = forwardRef((props, ref) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={false} md={8}>
-        {pokemonEvolution.map((pokemon) => (
-          <h1 key={pokemon.id}>{pokemon.name}</h1>
-        ))}
-      </Grid>
+      {pokemonEvolution.length > 1 && (
+        <Grid item xs={false} md={6}>
+          <Typography variant="h4" className={classes.namePokemon}>
+            EVOLUTION
+          </Typography>
+
+          <Grid
+            container
+            direction="column"
+            spacing={2}
+            justify="space-around"
+            className={classes.contentEvolution}
+          >
+            {pokemonEvolution.map(({ id, name, sprites }) => (
+              <Grid item key={id} className={classes.itemEvolution}>
+                {pokemonEvolution.findIndex((el) => el.name === name) !== 0 && (
+                  <KeyboardArrowDownIcon
+                    fontSize="large"
+                    className={classes.arrowEvolution}
+                  />
+                )}
+                <img
+                  src={sprites.front_default}
+                  alt="pokeapi"
+                  className={classes.mediaEvolution}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
+      )}
     </Grid>
+  ) : (
+    <Loading />
   );
 });
 
