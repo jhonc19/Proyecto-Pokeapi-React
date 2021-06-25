@@ -87,6 +87,8 @@ const useStyles = makeStyles((props) => ({
 
   arrowEvolution: {
     marginTop: (props) => `${props.marginArrow}`,
+    fontWeight: 900,
+    fontSize: 50,
   },
 
   mediaEvolution: {

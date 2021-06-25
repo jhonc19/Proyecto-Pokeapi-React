@@ -1,14 +1,16 @@
 import React, { useContext, useState } from 'react';
 
-import Box from '@material-ui/core/Box';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputLabel from '@material-ui/core/InputLabel';
-import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
+import {
+  Box,
+  InputAdornment,
+  IconButton,
+  FormControl,
+  FormHelperText,
+  OutlinedInput,
+  InputLabel,
+  Button,
+  Icon,
+} from '@material-ui/core';
 
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -16,34 +18,31 @@ import AccountBox from '@material-ui/icons/AccountCircle';
 
 import AuthContext from '../../context/Auth/AuthContext';
 import useStyles from './FormSignIn.styles';
+import { useForm } from '../../hooks/useForm';
 
 const FormSignIn = () => {
   const classes = useStyles();
   const authContext = useContext(AuthContext);
-  const { login, isLogged } = authContext;
+  const { login } = authContext;
 
-  const [values, setValues] = useState({
-    user: '',
+  const [showPassword, setShowPassword] = useState(false);
+
+  const inititalState = {
+    email: '',
     password: '',
-    showPassword: false,
-  });
-
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
   };
 
-  const handleInputChange = (e) => {
-    const target = e.target;
-    const value = target.value;
-    const name = target.name;
+  const validatedFields = { email: false, password: false };
 
-    setValues({ ...values, [name]: value });
-  };
+  const [values, handleInputChange, handleSubmit, errors] = useForm(
+    inititalState,
+    validatedFields
+  );
 
-  const handleSubmit = (e) => {
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const onSubmit = (e) => {
     e.preventDefault();
-    login();
-    console.log(isLogged);
+    handleSubmit(login);
   };
 
   return (
@@ -55,14 +54,18 @@ const FormSignIn = () => {
           alt="pokeapi"
         />
       </Box>
-      <form className={classes.form} onSubmit={handleSubmit}>
-        <FormControl className={classes.textField} variant="outlined" error>
+      <form className={classes.form} onSubmit={onSubmit}>
+        <FormControl
+          className={classes.textField}
+          variant="outlined"
+          error={errors.email}
+        >
           <InputLabel htmlFor="outlined-adornment-password">Email</InputLabel>
           <OutlinedInput
-            id="user"
             type="text"
-            name="user"
+            name="email"
             onChange={handleInputChange}
+            required={true}
             endAdornment={
               <InputAdornment position="end">
                 <Icon aria-label="toggle password visibility" edge="end">
@@ -72,19 +75,24 @@ const FormSignIn = () => {
             }
             labelWidth={70}
           />
-          <FormHelperText id="component-error-text">
-            Formato de Email Invalido
-          </FormHelperText>
+          {errors.email && (
+            <FormHelperText>Email vacio o invalido</FormHelperText>
+          )}
         </FormControl>
-        <FormControl className={classes.textField} variant="outlined">
+        <FormControl
+          className={classes.textField}
+          variant="outlined"
+          error={errors.password}
+        >
           <InputLabel htmlFor="outlined-adornment-password">
             Password
           </InputLabel>
           <OutlinedInput
             id="password"
-            type={values.showPassword ? 'text' : 'password'}
+            type={showPassword ? 'text' : 'password'}
             name="password"
             onChange={handleInputChange}
+            required={true}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
@@ -92,12 +100,15 @@ const FormSignIn = () => {
                   onClick={handleClickShowPassword}
                   edge="end"
                 >
-                  {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             }
             labelWidth={70}
           />
+          {errors.password && (
+            <FormHelperText>Password vacio o invalido</FormHelperText>
+          )}
         </FormControl>
         <Button
           className={classes.button}

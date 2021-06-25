@@ -1,20 +1,24 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import clsx from 'clsx';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Box,
+  Drawer,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+} from '@material-ui/core';
+
 import MenuIcon from '@material-ui/icons/Menu';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import Drawer from '@material-ui/core/Drawer';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+
+import clsx from 'clsx';
 
 import PeopleIcon from '@material-ui/icons/People';
 import MoreVertOutlinedIcon from '@material-ui/icons/MoreVertOutlined';
@@ -25,14 +29,19 @@ import { ListItemText } from '@material-ui/core';
 import useStyles from './Header.styles';
 import StyleBadge from './StyleBadge';
 import PokemonContext from './../../../context/Pokemon/PokemonContext';
+import AuthContext from './../../../context/Auth/AuthContext';
 
 const Header = () => {
   const classes = useStyles();
 
-  const [open, setOpen] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
   const pokemonContext = useContext(PokemonContext);
   const { favoriteList } = pokemonContext;
+
+  const authContext = useContext(AuthContext);
+  const { logout } = authContext;
 
   const openMenu = Boolean(anchorEl);
 
@@ -46,6 +55,11 @@ const Header = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    handleClose();
+    logout();
   };
 
   return (
@@ -105,16 +119,16 @@ const Header = () => {
               },
             }}
           >
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={handleLogout}>
               <ListItemIcon>
-                <ExitToAppOutlinedIcon fontSize="large"/>
+                <ExitToAppOutlinedIcon fontSize="large" />
               </ListItemIcon>
-              <Typography variant="inherit" >Logout</Typography>
+              <Typography variant="inherit">Logout</Typography>
             </MenuItem>
             <MenuItem onClick={handleClose}>
               <ListItemIcon>
                 <StyleBadge badgeContent={favoriteList.length}>
-                  <FavoriteOutlinedIcon color="secondary" fontSize="large"/>
+                  <FavoriteOutlinedIcon color="secondary" fontSize="large" />
                 </StyleBadge>
               </ListItemIcon>
               <Typography variant="inherit">Favorites</Typography>
@@ -148,7 +162,7 @@ const Header = () => {
                 <FavoriteOutlinedIcon />
               </ListItemIcon>
               <ListItemText primary="Favoritos" />
-            </ListItem>            
+            </ListItem>
           </div>
         </List>
       </Drawer>

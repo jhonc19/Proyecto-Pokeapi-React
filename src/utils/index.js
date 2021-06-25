@@ -81,3 +81,10 @@ export const getUrlEvolution = async (url) => {
   const { evolution_chain } = data;
   return evolution_chain.url;
 };
+
+export const validateEmail = (email) => {
+  const expr =
+    /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+
+  return expr.test(email);
+};

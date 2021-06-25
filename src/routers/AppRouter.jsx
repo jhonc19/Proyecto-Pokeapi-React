@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
 import HomeRoutes from './HomeRoutes';
@@ -12,10 +12,6 @@ import PublicRoute from './PublicRoute';
 const AppRouter = () => {
   const authContext = useContext(AuthContext);
   const { isLogged } = authContext;
-
-  useEffect(() => {
-    console.log('is Logged', isLogged);
-  }, [isLogged]);
 
   return (
     <Router>

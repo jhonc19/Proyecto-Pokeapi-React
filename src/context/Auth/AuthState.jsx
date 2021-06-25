@@ -4,7 +4,7 @@ import AuthReducer from './AuthReducer';
 
 const AuthState = (props) => {
   const initialState = {
-    isLogged: true,
+    isLogged: false,
   };
 
   const login = () => {

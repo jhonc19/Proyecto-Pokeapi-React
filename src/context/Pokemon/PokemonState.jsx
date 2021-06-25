@@ -38,11 +38,6 @@ const PokemonState = (props) => {
   const getFavorites = () => {
     let favoriteList;
 
-    console.log(
-      window.localStorage.getItem('favorite_pokemon') !== null,
-      'LocalStorage'
-    );
-
     window.localStorage.getItem('favorite_pokemon') !== null
       ? (favoriteList = JSON.parse(
           window.localStorage.getItem('favorite_pokemon')

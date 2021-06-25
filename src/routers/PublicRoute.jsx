@@ -7,6 +7,8 @@ const PublicRoute = ({
   component: Component,
   ...otherProps
 }) => {
+  console.log('public', !isAuthenticated);
+
   return (
     <Route
       {...otherProps}

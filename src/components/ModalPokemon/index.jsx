@@ -169,10 +169,7 @@ const ModalPokemon = forwardRef((props, ref) => {
             {pokemonEvolution.map(({ id, name, sprites }) => (
               <Grid item key={id} className={classes.itemEvolution}>
                 {pokemonEvolution.findIndex((el) => el.name === name) !== 0 && (
-                  <KeyboardArrowDownIcon
-                    fontSize="large"
-                    className={classes.arrowEvolution}
-                  />
+                  <KeyboardArrowDownIcon className={classes.arrowEvolution} />
                 )}
                 <img
                   src={sprites.front_default}
