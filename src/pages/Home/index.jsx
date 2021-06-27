@@ -15,7 +15,6 @@ const Home = () => {
     setTimeout(() => {
       setActualPage(page - 1);
     }, 750);
-    // console.log(actualPage)
   };
 
   return (

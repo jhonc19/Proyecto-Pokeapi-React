@@ -5,17 +5,6 @@ export const useForm = (initialState = {}, validatedFields = []) => {
   const [values, setValues] = useState(initialState);
   const [errors, setErrors] = useState(validatedFields);
 
-  const resetValues = () => {
-    setValues(initialState);
-  };
-
-  const handleSubmit = (onSubmit) => {
-    if (!verificationErrors()) {
-      onSubmit();
-      resetValues();
-    }
-  };
-
   const verificationErrors = () => {
     let validation = false;
 
@@ -64,5 +53,5 @@ export const useForm = (initialState = {}, validatedFields = []) => {
     setErrors(validation(target.name));
   };
 
-  return [values, handleInputChange, handleSubmit, errors];
+  return [values, errors, handleInputChange, verificationErrors];
 };

@@ -34,15 +34,18 @@ const FormSignIn = () => {
 
   const validatedFields = { email: false, password: false };
 
-  const [values, handleInputChange, handleSubmit, errors] = useForm(
+  const [values, errors, handleInputChange, verificationErrors] = useForm(
     inititalState,
     validatedFields
   );
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    handleSubmit(login);
+
+    if (!verificationErrors()) {
+      await login(values.email, values.password);
+    }
   };
 
   return (
@@ -54,7 +57,7 @@ const FormSignIn = () => {
           alt="pokeapi"
         />
       </Box>
-      <form className={classes.form} onSubmit={onSubmit}>
+      <form className={classes.form} onSubmit={onSubmit} autoComplete="off">
         <FormControl
           className={classes.textField}
           variant="outlined"

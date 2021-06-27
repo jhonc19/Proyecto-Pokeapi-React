@@ -6,6 +6,18 @@ const reducer = (state, action) => {
         isLogged: action.payload,
       };
 
+    case 'USER_LOGGED':
+      return {
+        ...state,
+        userLogged: action.payload,
+      };
+
+    case 'PENDING':
+      return {
+        ...state,
+        isPending: action.payload,
+      };
+
     default:
       return state;
   }

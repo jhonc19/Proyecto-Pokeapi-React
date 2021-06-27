@@ -41,7 +41,7 @@ const Header = () => {
   const { favoriteList } = pokemonContext;
 
   const authContext = useContext(AuthContext);
-  const { logout } = authContext;
+  const { logout, userLogged } = authContext;
 
   const openMenu = Boolean(anchorEl);
 
@@ -57,9 +57,9 @@ const Header = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     handleClose();
-    logout();
+    await logout();
   };
 
   return (
@@ -100,7 +100,7 @@ const Header = () => {
             noWrap
             className={classes.nameUser}
           >
-            Jhon Choque
+            {userLogged.displayName}
           </Typography>
           <IconButton color="inherit" onClick={handleClick}>
             <MoreVertOutlinedIcon />

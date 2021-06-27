@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
-import Box from '@material-ui/core/Box';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import FormControl from '@material-ui/core/FormControl';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputLabel from '@material-ui/core/InputLabel';
-import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
+import {
+  Box,
+  InputAdornment,
+  IconButton,
+  FormControl,
+  OutlinedInput,
+  InputLabel,
+  Button,
+  Icon,
+  FormHelperText,
+} from '@material-ui/core';
 
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -15,27 +18,38 @@ import AccountBox from '@material-ui/icons/AccountCircle';
 import Person from '@material-ui/icons/Person';
 
 import useStyles from './FormSignUp.styles';
+import AuthContext from '../../context/Auth/AuthContext';
+import { useForm } from '../../hooks/useForm';
 
 const FormSignUp = () => {
   const classes = useStyles();
+  const authContext = useContext(AuthContext);
+  const { register } = authContext;
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [values, setValues] = useState({
+  const inititalState = {
     name: '',
-    user: '',
+    email: '',
     password: '',
-    showPassword: false,
-  });
-
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
   };
 
-  const handleInputChange = (e) => {
-    const target = e.target;
-    const value = target.value;
-    const name = target.name;
+  const validatedFields = { name: false, email: false, password: false };
 
-    setValues({ ...values, [name]: value });
+  const [values, errors, handleInputChange, verificationErrors] = useForm(
+    inititalState,
+    validatedFields
+  );
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!verificationErrors()) {
+      await register(values.name, values.email, values.password);
+    }
   };
 
   return (
@@ -47,14 +61,18 @@ const FormSignUp = () => {
           alt="pokeapi"
         />
       </Box>
-      <form className={classes.form}>
-        <FormControl className={classes.textField} variant="outlined">
+      <form className={classes.form} onSubmit={onSubmit} autoComplete="off">
+        <FormControl
+          className={classes.textField}
+          variant="outlined"
+          error={errors.name}
+        >
           <InputLabel htmlFor="outlined-adornment-password">Name</InputLabel>
           <OutlinedInput
-            id="name"
             type="text"
             name="name"
             onChange={handleInputChange}
+            required={true}
             endAdornment={
               <InputAdornment position="end">
                 <Icon aria-label="toggle password visibility" edge="end">
@@ -64,14 +82,19 @@ const FormSignUp = () => {
             }
             labelWidth={70}
           />
+          {errors.name && <FormHelperText>Nombre vacio</FormHelperText>}
         </FormControl>
-        <FormControl className={classes.textField} variant="outlined">
+        <FormControl
+          className={classes.textField}
+          variant="outlined"
+          error={errors.email}
+        >
           <InputLabel htmlFor="outlined-adornment-password">Email</InputLabel>
           <OutlinedInput
-            id="user"
             type="text"
-            name="user"
+            name="email"
             onChange={handleInputChange}
+            required={true}
             endAdornment={
               <InputAdornment position="end">
                 <Icon aria-label="toggle password visibility" edge="end">
@@ -81,16 +104,23 @@ const FormSignUp = () => {
             }
             labelWidth={70}
           />
+          {errors.email && (
+            <FormHelperText>Email vacio o invalido</FormHelperText>
+          )}
         </FormControl>
-        <FormControl className={classes.textField} variant="outlined">
+        <FormControl
+          className={classes.textField}
+          variant="outlined"
+          error={errors.password}
+        >
           <InputLabel htmlFor="outlined-adornment-password">
             Password
           </InputLabel>
           <OutlinedInput
-            id="password"
-            type={values.showPassword ? 'text' : 'password'}
+            type={showPassword ? 'text' : 'password'}
             name="password"
             onChange={handleInputChange}
+            required={true}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
@@ -98,18 +128,22 @@ const FormSignUp = () => {
                   onClick={handleClickShowPassword}
                   edge="end"
                 >
-                  {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             }
             labelWidth={70}
           />
+          {errors.password && (
+            <FormHelperText>Password vacio o invalido</FormHelperText>
+          )}
         </FormControl>
         <Button
           className={classes.button}
           variant="contained"
           color="primary"
           size="large"
+          type="submit"
         >
           Registrarse
         </Button>
