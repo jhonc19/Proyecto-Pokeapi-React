@@ -5,11 +5,14 @@ import Grid from '@material-ui/core/Grid';
 import useStyles from './ListadoPokemon.styles';
 import CardPokemon from '../CardPokemon';
 import PokemonContext from './../../context/Pokemon/PokemonContext';
+import AuthContext from './../../context/Auth/AuthContext';
 import Loading from '../shared/Loading';
 import NotFound from '../shared/NotFound';
 
 const ListadoPokemon = ({ page }) => {
   const classes = useStyles();
+  const authContext = useContext(AuthContext);
+  const { userLogged } = authContext;
   const pokemonContext = useContext(PokemonContext);
   const {
     getPokemons,
@@ -22,7 +25,7 @@ const ListadoPokemon = ({ page }) => {
   } = pokemonContext;
 
   useEffect(() => {
-    getFavorites();
+    getFavorites(userLogged.email);
   }, []);
 
   useEffect(() => {

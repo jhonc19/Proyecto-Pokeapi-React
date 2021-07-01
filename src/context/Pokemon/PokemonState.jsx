@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react';
 import axios from 'axios';
+import { db } from '../../firebase/firebaseConfig';
 import PokemonContext from './PokemonContext';
 import PokemonReducer from './PokemonReducer';
 
@@ -35,14 +36,22 @@ const PokemonState = (props) => {
     }
   };
 
-  const getFavorites = () => {
+  const getFavorites = async (idUser) => {
     let favoriteList;
+    const firestoreRef = db.collection('pokemons-favorites').doc(idUser);
+    await firestoreRef.get().then((querySnapshot) => {
+      if (querySnapshot.data()) {
+        favoriteList = querySnapshot.data().pokemonId;
+      } else {
+        favoriteList = [];
+      }
+    });
 
-    window.localStorage.getItem('favorite_pokemon') !== null
-      ? (favoriteList = JSON.parse(
-          window.localStorage.getItem('favorite_pokemon')
-        ))
-      : (favoriteList = []);
+    // window.localStorage.getItem('favorite_pokemon') !== null
+    //   ? (favoriteList = JSON.parse(
+    //       window.localStorage.getItem('favorite_pokemon')
+    //     ))
+    //   : (favoriteList = []);
 
     dispatch({
       type: 'SET_FAVORITE',
@@ -103,25 +112,27 @@ const PokemonState = (props) => {
     });
   };
 
-  const updateFavorites = (namePokemon) => {
+  const updateFavorites = async (idPokemon, idUser) => {
     let favoriteList;
+    const firestoreRef = db.collection('pokemons-favorites').doc(idUser);
 
-    window.localStorage.getItem('favorite_pokemon') !== null
-      ? (favoriteList = JSON.parse(
-          window.localStorage.getItem('favorite_pokemon')
-        ))
-      : (favoriteList = []);
+    await firestoreRef.get().then((querySnapshot) => {
+      if (querySnapshot.data()) {
+        favoriteList = querySnapshot.data().pokemonId;
+      } else {
+        favoriteList = [];
+      }
+    });
 
-    const isFavorite = favoriteList.indexOf(namePokemon);
+    const isFavorite = favoriteList.indexOf(idPokemon);
 
     isFavorite >= 0
       ? favoriteList.splice(isFavorite, 1)
-      : favoriteList.push(namePokemon);
+      : favoriteList.push(idPokemon);
 
-    window.localStorage.setItem(
-      'favorite_pokemon',
-      JSON.stringify(favoriteList)
-    );
+    await firestoreRef.set({
+      pokemonId: favoriteList,
+    })  
 
     dispatch({
       type: 'SET_FAVORITE',
@@ -163,14 +174,14 @@ const PokemonState = (props) => {
     } catch (error) {
       console.log(error);
     }
-  }
-  
+  };
+
   const clearEvolution = async () => {
     dispatch({
       type: 'GET_EVOLUTION',
       payload: [],
     });
-  }
+  };
 
   const getNamePokemonEvolution = (chain) => {
     let namePokemons = [];
@@ -198,7 +209,7 @@ const PokemonState = (props) => {
         searchPokemon,
         clearPokemon,
         clearPokemons,
-        clearEvolution,        
+        clearEvolution,
         getEvolution,
         notFound: state.notFound,
         search: state.search,

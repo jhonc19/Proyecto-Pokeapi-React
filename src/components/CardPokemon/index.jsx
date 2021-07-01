@@ -14,21 +14,24 @@ import FavoriteOutlined from '@material-ui/icons/FavoriteOutlined';
 import useStyles from './CardPokemon.styles';
 
 import PokemonContext from '../../context/Pokemon/PokemonContext';
+import AuthContext from '../../context/Auth/AuthContext';
 import ModalPokemon from '../ModalPokemon';
 import AlertSnackbar from '../shared/AlertSnackbar';
 
 import { getIconByType, getColorByType, capitalizeString } from '../../utils';
 
 const CardPokemon = ({ pokemon }) => {
-  const { name, types, sprites } = pokemon;
+  const { id, name, types, sprites } = pokemon;
 
   const colors = getColorByType(types[0].type.name);
   const classes = useStyles({ colorMax: colors[0], colorMin: colors[1] });
 
   const pokemonContext = useContext(PokemonContext);
   const { favoriteList, updateFavorites } = pokemonContext;
+  const authContext = useContext(AuthContext);
+  const { userLogged } = authContext;
 
-  const heart = favoriteList.includes(pokemon.name) ? 'secondary' : 'default';
+  const heart = favoriteList.includes(id) ? 'secondary' : 'default';
 
   const [open, setOpen] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -38,13 +41,13 @@ const CardPokemon = ({ pokemon }) => {
 
   const handleHeart = (e) => {
     e.preventDefault();
-    updateFavorites(name);
-    setOpenSnackbar(true);
+    updateFavorites(id, userLogged.email);
+    setTimeout(() => setOpenSnackbar(true), 1000);
   };
 
   return (
     <Card className={classes.root}>
-      {favoriteList.includes(pokemon.name) ? (
+      {favoriteList.includes(id) ? (
         <AlertSnackbar
           open={openSnackbar}
           setOpen={setOpenSnackbar}
