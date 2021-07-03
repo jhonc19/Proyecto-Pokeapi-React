@@ -8,7 +8,9 @@ const HomeRoutes = () => {
     <Layout>
       <Switch>
         <Route exact path="/pokemon/list" component={Home} />
-        <Route exact path="/pokemon/favorites" component={Home} />
+        <Route exact path="/pokemon/favorites">
+          <Home showPagination={false} />
+        </Route>
         <Redirect to="/pokemon/list" />
       </Switch>
     </Layout>

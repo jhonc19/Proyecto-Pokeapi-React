@@ -52,7 +52,7 @@ const ModalPokemon = forwardRef((props, ref) => {
     };
 
     fetchData();
-  }, []);
+  }, [clearEvolution, getEvolution, species.url]);
 
   return pokemonEvolution.length > 0 ? (
     <Grid container className={classes.root} spacing={2}>

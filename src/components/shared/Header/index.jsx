@@ -15,6 +15,8 @@ import {
   MenuItem,
 } from '@material-ui/core';
 
+import { Link } from 'react-router-dom';
+
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
@@ -125,7 +127,7 @@ const Header = () => {
               </ListItemIcon>
               <Typography variant="inherit">Logout</Typography>
             </MenuItem>
-            <MenuItem onClick={handleClose}>
+            <MenuItem onClick={handleClose} component={Link} to="/pokemon/favorites">
               <ListItemIcon>
                 <StyleBadge badgeContent={favoriteList.length}>
                   <FavoriteOutlinedIcon color="secondary" fontSize="large" />
@@ -151,13 +153,14 @@ const Header = () => {
         <Divider />
         <List>
           <div>
-            <ListItem button>
+            <ListItem button component={Link} to="/pokemon/list">
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
               <ListItemText primary="Listado" />
             </ListItem>
-            <ListItem button>
+
+            <ListItem button component={Link} to="/pokemon/favorites">
               <ListItemIcon>
                 <FavoriteOutlinedIcon />
               </ListItemIcon>

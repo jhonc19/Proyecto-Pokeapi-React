@@ -36,6 +36,26 @@ const PokemonState = (props) => {
     }
   };
 
+  const getPokemonsFavorites = async (favoriteList) => {
+    try {
+      const promises = favoriteList.map(async (el) => {
+        const { data } = await axios.get(
+          `https://pokeapi.co/api/v2/pokemon/${el}`
+        );
+        return data;
+      });
+
+      const pokemonList = await Promise.all(promises);
+
+      dispatch({
+        type: 'GET_POKEMONS',
+        payload: pokemonList,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getFavorites = async (idUser) => {
     let favoriteList;
     const firestoreRef = db.collection('pokemons-favorites').doc(idUser);
@@ -132,7 +152,7 @@ const PokemonState = (props) => {
 
     await firestoreRef.set({
       pokemonId: favoriteList,
-    })  
+    });
 
     dispatch({
       type: 'SET_FAVORITE',
@@ -211,6 +231,7 @@ const PokemonState = (props) => {
         clearPokemons,
         clearEvolution,
         getEvolution,
+        getPokemonsFavorites,
         notFound: state.notFound,
         search: state.search,
         pokemonEvolution: state.pokemonEvolution,

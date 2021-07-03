@@ -6,7 +6,7 @@ import Buscar from '../../components/shared/Buscar';
 import ListadoPokemon from '../../components/ListadoPokemon';
 import useStyles from './Home.styles';
 
-const Home = () => {
+const Home = ({ showPagination = true }) => {
   const classes = useStyles();
 
   const [actualPage, setActualPage] = useState(0);
@@ -19,15 +19,17 @@ const Home = () => {
 
   return (
     <>
-      <Buscar />
+      {showPagination && <Buscar />}
       <ListadoPokemon page={actualPage} />
-      <Pagination
-        count={70}
-        color="primary"
-        size="large"
-        className={classes.navCenter}
-        onChange={handleChange}
-      />
+      {showPagination && (
+        <Pagination
+          count={70}
+          color="primary"
+          size="large"
+          className={classes.navCenter}
+          onChange={handleChange}
+        />
+      )}
     </>
   );
 };
